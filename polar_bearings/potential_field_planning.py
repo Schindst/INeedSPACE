@@ -30,9 +30,9 @@ def calc_potential_field(gx, gy, ox, oy, reso, rr, sx, sy):
     yw = int(round((maxy - miny) / reso))
 
     # calc each potential
-    pmap = [[0.0 for i in range(yw)] for i in range(xw)]
+    pmap = np.zeros((xw, yw))
 
-    for ix in trange(xw, desc='Calculating potential field'):
+    for ix in trange(xw, desc="Calculating potential field"):
         x = ix * reso + minx
 
         for iy in range(yw):
