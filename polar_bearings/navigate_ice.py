@@ -5,13 +5,15 @@ import pandas as pd
 from potential_field_planning import potential_field_planning
 
 
-def main(filepath: str = "ice_thickness_01-01-2020.csv", rescaling_factor: int = 2):
+def main(
+    filepath: str = "ice_thickness_01-01-2020.csv",
+    rescaling_factor: int = 2,
+    grid_size: float = 0.1,
+    robot_radius: float = 0.01,
+):
     """Loads the ice thickness data and plans a route over safe ice."""
 
     gx, gy, sx, sy, ox, oy = process_data(filepath, rescaling_factor)
-
-    grid_size = 0.1  # potential grid size
-    robot_radius = 0.01  # robot radius
 
     plt.grid(True)
     plt.axis("equal")
@@ -22,13 +24,17 @@ def main(filepath: str = "ice_thickness_01-01-2020.csv", rescaling_factor: int =
     plt.show()
 
 
-def process_data(filepath, rescaling_factor, safety_threshold: float = 1.0):
+def process_data(
+    filepath: str = "ice_thickness_01-01-2020.csv",
+    rescaling_factor: int = 2,
+    safety_threshold: float = 1.0,
+):
     """Rescales data, then provides the coordinates needed for the pathfinder."""
     df = pd.read_csv(filepath)
     df_rescaled = df.iloc[::rescaling_factor, :]
     sx, sy, gx, gy = find_start_end(df_rescaled)
 
-    df_rescaled = df_rescaled.fillna(safety_threshold)   # NaN values are land
+    df_rescaled = df_rescaled.fillna(safety_threshold)  # NaN values are land
     unsafe = df_rescaled[df_rescaled.sithick < safety_threshold]
 
     ox = unsafe.latitude.values.tolist()
