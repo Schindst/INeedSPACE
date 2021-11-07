@@ -23,6 +23,7 @@ def main(filepath: str = "ice_thickness_01-01-2020.csv", rescaling_factor: int =
 
 
 def process_data(filepath, rescaling_factor, safety_threshold: float = 1.0):
+    """Rescales data, then provides the coordinates needed for the pathfinder."""
     df = pd.read_csv(filepath)
     df_rescaled = df.iloc[::rescaling_factor, :]
     sx, sy, gx, gy = find_start_end(df_rescaled)
@@ -42,6 +43,7 @@ def find_closest(df, lat, lon):
 
 
 def find_start_end(df_rescaled: pd.DataFrame) -> Tuple[int, int, int, int]:
+    """Finds start and end points of ulukhaktok and sachs harbour, then scales their coordinate values to the origin."""
     origin_x = min(df_rescaled.longitude)
     origin_y = min(df_rescaled.latitude)
     df_rescaled["longitude"] = df_rescaled.longitude - origin_x
