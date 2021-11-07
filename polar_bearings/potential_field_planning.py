@@ -9,6 +9,7 @@ from typing import List
 
 import matplotlib.pyplot as plt
 import numpy as np
+from tqdm import trange
 
 # Parameters
 KP = 5.0  # attractive potential gain
@@ -31,7 +32,7 @@ def calc_potential_field(gx, gy, ox, oy, reso, rr, sx, sy):
     # calc each potential
     pmap = [[0.0 for i in range(yw)] for i in range(xw)]
 
-    for ix in range(xw):
+    for ix in trange(xw, desc='Calculating potential field'):
         x = ix * reso + minx
 
         for iy in range(yw):
@@ -49,12 +50,8 @@ def calc_attractive_potential(x, y, gx, gy):
 
 
 def calc_repulsive_potential(x, y, ox, oy, rr):
-    # search nearest obstacle
-    minid = -1
-    dmin = float("inf")
-
+    # search for nearest obstacle
     d = np.hypot(x - np.asarray(ox), y - np.asarray(oy))
-    dmin = np.min(d)
     minid = np.argmin(d)
 
     # calc repulsive potential
