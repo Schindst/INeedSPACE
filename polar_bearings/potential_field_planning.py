@@ -52,11 +52,10 @@ def calc_repulsive_potential(x, y, ox, oy, rr):
     # search nearest obstacle
     minid = -1
     dmin = float("inf")
-    for i, _ in enumerate(ox):
-        d = np.hypot(x - ox[i], y - oy[i])
-        if dmin >= d:
-            dmin = d
-            minid = i
+
+    d = np.hypot(x - np.asarray(ox), y - np.asarray(oy))
+    dmin = np.min(d)
+    minid = np.argmin(d)
 
     # calc repulsive potential
     dq = np.hypot(x - ox[minid], y - oy[minid])
