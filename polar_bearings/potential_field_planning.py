@@ -5,8 +5,10 @@ https://www.cs.cmu.edu/~motionplanning/lecture/Chap4-Potential-Field_howie.pdf
 """
 
 from collections import deque
-import numpy as np
+from typing import List
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 # Parameters
 KP = 5.0  # attractive potential gain
@@ -91,7 +93,16 @@ def oscillations_detection(previous_ids, ix, iy):
     return False
 
 
-def potential_field_planning(sx, sy, gx, gy, ox, oy, reso, rr):
+def potential_field_planning(
+    sx: float,
+    sy: float,
+    gx: float,
+    gy: float,
+    ox: List[float],
+    oy: List[float],
+    reso: float,
+    rr: float,
+):
 
     # calc potential field
     pmap, minx, miny = calc_potential_field(gx, gy, ox, oy, reso, rr, sx, sy)
@@ -159,8 +170,6 @@ def draw_heatmap(data):
 
 
 def main():
-    print("potential_field_planning start")
-
     sx = 0.0  # start x position [m]
     sy = 10.0  # start y positon [m]
     gx = 30.0  # goal x position [m]
