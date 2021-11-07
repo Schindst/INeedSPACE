@@ -10,8 +10,8 @@ def main(filepath: str = "ice_thickness_01-01-2020.csv", rescaling_factor: int =
 
     gx, gy, sx, sy, ox, oy = process_data(filepath, rescaling_factor)
 
-    grid_size = 100  # potential grid size [m]
-    robot_radius = 1  # robot radius [m]
+    grid_size = 0.1  # potential grid size
+    robot_radius = 0.01  # robot radius
 
     plt.grid(True)
     plt.axis("equal")
@@ -31,8 +31,8 @@ def process_data(filepath, rescaling_factor, safety_threshold: float = 1.0):
     df_rescaled = df_rescaled.fillna(safety_threshold)   # NaN values are land
     unsafe = df_rescaled[df_rescaled.sithick < safety_threshold]
 
-    ox = [int(x * 1000) for x in unsafe.latitude.values.tolist()]
-    oy = [int(x * 1000) for x in unsafe.longitude.values.tolist()]
+    ox = unsafe.latitude.values.tolist()
+    oy = unsafe.longitude.values.tolist()
 
     return gx, gy, sx, sy, ox, oy
 
