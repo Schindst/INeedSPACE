@@ -29,18 +29,18 @@ def calc_potential_field(gx, gy, ox, oy, reso, rr, sx, sy):
     xw = int(round((maxx - minx) / reso))
     yw = int(round((maxy - miny) / reso))
 
+    x = np.arange(xw) * reso + minx
+    y = np.arange(yw) * reso + miny
+
     # calc each potential
     pmap = np.zeros((xw, yw))
 
-    for ix in trange(xw, desc="Calculating potential field"):
-        x = ix * reso + minx
-
-        for iy in range(yw):
-            y = iy * reso + miny
-            ug = calc_attractive_potential(x, y, gx, gy)
-            uo = calc_repulsive_potential(x, y, ox, oy, rr)
+    for i, ix in trange(enumerate(x), desc="Calculating potential field"):
+        for j, iy in enumerate(y):
+            ug = calc_attractive_potential(ix, iy, gx, gy)
+            uo = calc_repulsive_potential(ix, iy, ox, oy, rr)
             uf = ug + uo
-            pmap[ix][iy] = uf
+            pmap[i][j] = uf
 
     return pmap, minx, miny
 
