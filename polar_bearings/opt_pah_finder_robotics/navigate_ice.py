@@ -2,7 +2,10 @@ from typing import Tuple
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from polar_bearings.opt_pah_finder_robotics.potential_field_planning import potential_field_planning
+
+from polar_bearings.opt_pah_finder_robotics.potential_field_planning import (
+    potential_field_planning,
+)
 
 
 def main(
@@ -49,16 +52,14 @@ def find_closest(df, lat, lon):
 
 def find_start_end(df_rescaled: pd.DataFrame) -> Tuple[int, int, int, int]:
     """Finds start and end points of ulukhaktok and sachs harbour, then scales their coordinate values to the origin."""
-    origin_x = min(df_rescaled.longitude)
-    origin_y = min(df_rescaled.latitude)
-    df_rescaled["longitude"] = df_rescaled.longitude - origin_x
-    df_rescaled["latitude"] = df_rescaled.latitude - origin_y
+    df_rescaled["longitude"] = df_rescaled.longitude
+    df_rescaled["latitude"] = df_rescaled.latitude
 
     ulukhaktok_y, ulukhaktok_x = (
-        70.74025296172513 - origin_y,
-        -117.77122885607929 - origin_x,
+        70.74025296172513,
+        -117.77122885607929,
     )
-    sachs_y, sachs_x = 71.98715823380064 - origin_y, -125.24848194895534 - origin_x
+    sachs_y, sachs_x = 71.98715823380064, -125.24848194895534
 
     closest = find_closest(df_rescaled, ulukhaktok_y, ulukhaktok_x)
     sy, sx = closest["latitude"], closest["longitude"]
