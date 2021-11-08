@@ -12,8 +12,10 @@ def main(
     robot_radius: float = 0.01,
 ):
     """Loads the ice thickness data and plans a route over safe ice."""
+    df = pd.read_csv(filepath)
+    df_rescaled = df.iloc[::rescaling_factor, :]
 
-    gx, gy, sx, sy, ox, oy = process_data(filepath, rescaling_factor)
+    gx, gy, sx, sy, ox, oy = process_data(df_rescaled)
 
     plt.grid(True)
     plt.axis("equal")
@@ -25,17 +27,14 @@ def main(
 
 
 def process_data(
-    filepath: str = "ice_thickness_01-01-2020.csv",
-    rescaling_factor: int = 2,
+    single_day_df: pd.DataFrame,
     safety_threshold: float = 1.0,
 ):
     """Rescales data, then provides the coordinates needed for the pathfinder."""
-    df = pd.read_csv(filepath)
-    df_rescaled = df.iloc[::rescaling_factor, :]
-    sx, sy, gx, gy = find_start_end(df_rescaled)
+    sx, sy, gx, gy = find_start_end(single_day_df)
 
-    df_rescaled = df_rescaled.fillna(safety_threshold)  # NaN values are land
-    unsafe = df_rescaled[df_rescaled.sithick < safety_threshold]
+    single_day_df = single_day_df.fillna(safety_threshold)  # NaN values are land
+    unsafe = single_day_df[single_day_df.sithick < safety_threshold]
 
     ox = unsafe.latitude.values.tolist()
     oy = unsafe.longitude.values.tolist()
