@@ -1,7 +1,7 @@
 # PolarBearings
 Our contribution to the 2nd CASSINI Hackathon on "Connection the Arctic". 
 
-A **polar navigation platform** that provides **optimal routing** for land vehicles in **arctic regions** influenced by **climate change**.
+A **polar navigation platform** that provides **safe routing over ice** for land vehicles in **arctic regions** influenced by **climate change**.
 
 
 Our POC use case, of finding the optimal path between 2 locations in Northern Canada over the icey sea in January. 
