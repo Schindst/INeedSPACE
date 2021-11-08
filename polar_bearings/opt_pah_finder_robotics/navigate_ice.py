@@ -42,6 +42,7 @@ def process_data(
     ox = unsafe.latitude.values.tolist()
     oy = unsafe.longitude.values.tolist()
 
+    print(f"{len(ox)}/{len(single_day_df)} co-ordinates considered as dangerous ice.")
     return gx, gy, sx, sy, ox, oy
 
 
