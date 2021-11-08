@@ -6,7 +6,7 @@ def import_nc_to_pandas(file):
     return df.reset_index()
 
 def single_data_df(data, date_index = 0):
-    single_day = data[data.time == data.time[date_index]]\
+    single_day = data[data.time == data.time[date_index]]
     single_day = single_day.drop('time', axis=1)
     single_day = single_day.dropna()
     return single_day.reset_index()
