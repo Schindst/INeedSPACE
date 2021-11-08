@@ -10,7 +10,7 @@ from typing import List
 
 import matplotlib.pyplot as plt
 import numpy as np
-from tqdm import tqdm, trange
+from tqdm import tqdm
 
 # Parameters
 KP = 5.0  # attractive potential gain
@@ -34,7 +34,7 @@ def calc_potential_field(gx, gy, ox, oy, reso, rr, sx, sy):
     # calc each potential
     pmap = np.zeros((xw, yw))
 
-    for i, ix in trange(enumerate(x), desc="Calculating potential field"):
+    for i, ix in enumerate(tqdm(x, desc="Calculating potential field")):
         for j, iy in enumerate(y):
             ug = calc_attractive_potential(ix, iy, gx, gy)
             uo = calc_repulsive_potential(ix, iy, ox, oy, rr)
