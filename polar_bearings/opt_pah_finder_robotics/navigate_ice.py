@@ -39,8 +39,8 @@ def process_data(
     single_day_df = single_day_df.fillna(safety_threshold)  # NaN values are land
     unsafe = single_day_df[single_day_df.sithick < safety_threshold]
 
-    ox = unsafe.latitude.values.tolist()
-    oy = unsafe.longitude.values.tolist()
+    ox = unsafe.longitude.values.tolist()
+    oy = unsafe.latitude.values.tolist()
 
     print(f"{len(ox)}/{len(single_day_df)} co-ordinates considered as dangerous ice.")
     return gx, gy, sx, sy, ox, oy
