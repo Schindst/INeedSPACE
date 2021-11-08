@@ -5,11 +5,12 @@ https://www.cs.cmu.edu/~motionplanning/lecture/Chap4-Potential-Field_howie.pdf
 """
 
 from collections import deque
+from decimal import Decimal
 from typing import List
 
 import matplotlib.pyplot as plt
 import numpy as np
-from tqdm import trange
+from tqdm import tqdm, trange
 
 # Parameters
 KP = 5.0  # attractive potential gain
@@ -17,8 +18,6 @@ ETA = 100.0  # repulsive potential gain
 AREA_WIDTH = 30.0  # potential area width [m]
 # the number of previous positions used to check oscillations
 OSCILLATIONS_DETECTION_LENGTH = 3
-
-show_animation = True
 
 
 def calc_potential_field(gx, gy, ox, oy, reso, rr, sx, sy):
@@ -89,6 +88,11 @@ def oscillations_detection(previous_ids, ix, iy):
     return False
 
 
+def generator(condition: bool):
+    while condition:
+        yield
+
+
 def potential_field_planning(
     sx: float,
     sy: float,
@@ -98,7 +102,17 @@ def potential_field_planning(
     oy: List[float],
     reso: float,
     rr: float,
+    show_animation: bool = False,
 ):
+    dp = -Decimal(str(reso)).as_tuple().exponent
+
+    # round co-ordinates to nearest grid point
+    ox = [round(x, dp) for x in ox]
+    oy = [round(y, dp) for y in oy]
+    sx = round(sx, dp)
+    sy = round(sy, dp)
+    gx = round(gx, dp)
+    gy = round(gy, dp)
 
     # calc potential field
     pmap, minx, miny = calc_potential_field(gx, gy, ox, oy, reso, rr, sx, sy)
@@ -124,7 +138,7 @@ def potential_field_planning(
     motion = get_motion_model()
     previous_ids = deque()
 
-    while d >= reso:
+    for _ in tqdm(generator(d >= reso), "Planning route"):
         minp = float("inf")
         minix, miniy = -1, -1
         for i, _ in enumerate(motion):
@@ -165,13 +179,13 @@ def draw_heatmap(data):
     plt.pcolor(data, vmax=100.0, cmap=plt.cm.Blues)
 
 
-def main():
+def main(show_animation: bool = False):
     sx = 0.0  # start x position [m]
     sy = 10.0  # start y positon [m]
     gx = 30.0  # goal x position [m]
     gy = 30.0  # goal y position [m]
-    grid_size = 0.5  # potential grid size [m]
-    robot_radius = 5.0  # robot radius [m]
+    grid_size = 0.1  # potential grid size [m]
+    robot_radius = 1.0  # robot radius [m]
 
     ox = [15.0, 5.0, 20.0, 25.0]  # obstacle x position list [m]
     oy = [25.0, 15.0, 26.0, 25.0]  # obstacle y position list [m]
@@ -181,7 +195,9 @@ def main():
         plt.axis("equal")
 
     # path generation
-    _, _ = potential_field_planning(sx, sy, gx, gy, ox, oy, grid_size, robot_radius)
+    _, _ = potential_field_planning(
+        sx, sy, gx, gy, ox, oy, grid_size, robot_radius, show_animation
+    )
 
     if show_animation:
         plt.show()
