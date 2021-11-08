@@ -2,7 +2,7 @@ from typing import Tuple
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from potential_field_planning import potential_field_planning
+from polar_bearings.opt_pah_finder_robotics.potential_field_planning import potential_field_planning
 
 
 def main(
