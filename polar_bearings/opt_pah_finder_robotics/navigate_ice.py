@@ -2,7 +2,10 @@ from typing import Tuple
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from potential_field_planning import potential_field_planning
+
+from polar_bearings.opt_pah_finder_robotics.potential_field_planning import (
+    potential_field_planning,
+)
 
 
 def main(
@@ -12,8 +15,10 @@ def main(
     robot_radius: float = 0.01,
 ):
     """Loads the ice thickness data and plans a route over safe ice."""
+    df = pd.read_csv(filepath)
+    df_rescaled = df.iloc[::rescaling_factor, :]
 
-    gx, gy, sx, sy, ox, oy = process_data(filepath, rescaling_factor)
+    gx, gy, sx, sy, ox, oy = process_data(df_rescaled)
 
     plt.grid(True)
     plt.axis("equal")
@@ -25,21 +30,19 @@ def main(
 
 
 def process_data(
-    filepath: str = "ice_thickness_01-01-2020.csv",
-    rescaling_factor: int = 2,
+    single_day_df: pd.DataFrame,
     safety_threshold: float = 1.0,
 ):
     """Rescales data, then provides the coordinates needed for the pathfinder."""
-    df = pd.read_csv(filepath)
-    df_rescaled = df.iloc[::rescaling_factor, :]
-    sx, sy, gx, gy = find_start_end(df_rescaled)
+    sx, sy, gx, gy = find_start_end(single_day_df)
 
-    df_rescaled = df_rescaled.fillna(safety_threshold)  # NaN values are land
-    unsafe = df_rescaled[df_rescaled.sithick < safety_threshold]
+    single_day_df = single_day_df.fillna(safety_threshold)  # NaN values are land
+    unsafe = single_day_df[single_day_df.sithick < safety_threshold]
 
-    ox = unsafe.latitude.values.tolist()
-    oy = unsafe.longitude.values.tolist()
+    ox = unsafe.longitude.values.tolist()
+    oy = unsafe.latitude.values.tolist()
 
+    print(f"{len(ox)}/{len(single_day_df)} co-ordinates considered as dangerous ice.")
     return gx, gy, sx, sy, ox, oy
 
 
@@ -50,16 +53,14 @@ def find_closest(df, lat, lon):
 
 def find_start_end(df_rescaled: pd.DataFrame) -> Tuple[int, int, int, int]:
     """Finds start and end points of ulukhaktok and sachs harbour, then scales their coordinate values to the origin."""
-    origin_x = min(df_rescaled.longitude)
-    origin_y = min(df_rescaled.latitude)
-    df_rescaled["longitude"] = df_rescaled.longitude - origin_x
-    df_rescaled["latitude"] = df_rescaled.latitude - origin_y
+    df_rescaled["longitude"] = df_rescaled.longitude
+    df_rescaled["latitude"] = df_rescaled.latitude
 
     ulukhaktok_y, ulukhaktok_x = (
-        70.74025296172513 - origin_y,
-        -117.77122885607929 - origin_x,
+        70.74025296172513,
+        -117.77122885607929,
     )
-    sachs_y, sachs_x = 71.98715823380064 - origin_y, -125.24848194895534 - origin_x
+    sachs_y, sachs_x = 71.98715823380064, -125.24848194895534
 
     closest = find_closest(df_rescaled, ulukhaktok_y, ulukhaktok_x)
     sy, sx = closest["latitude"], closest["longitude"]

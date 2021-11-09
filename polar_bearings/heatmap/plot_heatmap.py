@@ -9,9 +9,9 @@ def plot_heatmap(
     start_location,
     destination_location,
     zoom_start=6,
-):
+) -> Map:
     heatmap = Map(location=[axis_min_lat, axis_max_lon], zoom_start=zoom_start)
-    HeatMap(
+    hm_wide = HeatMap(
         list(zip(plot_data.latitude.values, plot_data.longitude.values)),
         min_opacity=0.2,
         radius=17,
